@@ -101,15 +101,15 @@ export default function Process() {
           {/* Connection Line - Desktop */}
           <div className="hidden lg:block absolute top-24 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#d4af37]/30 to-transparent"></div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
             {steps.map((step, index) => (
               <div
                 key={step.number}
-                className={`animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 delay-${(index + 3) * 100} relative`}
+                className={`animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 delay-${(index + 3) * 100} relative h-full`}
               >
-                <div className="relative group">
+                <div className="relative group h-full">
                   {/* Step Card */}
-                  <div className="relative bg-gradient-to-b from-[#111] to-[#0a0a0a] border border-gray-800 rounded-2xl p-8 transition-all duration-500 hover:border-[#d4af37]/50 hover:shadow-[0_0_30px_rgba(212,175,55,0.1)] h-full">
+                  <div className="relative bg-gradient-to-b from-[#111] to-[#0a0a0a] border border-gray-800 rounded-2xl p-8 transition-all duration-500 hover:border-[#d4af37]/50 hover:shadow-[0_0_30px_rgba(212,175,55,0.1)] h-full flex flex-col">
                     {/* Step Number */}
                     <div className="absolute -top-4 left-8 px-3 py-1 bg-[#d4af37] text-black text-sm font-bold rounded">
                       {step.number}
@@ -124,15 +124,15 @@ export default function Process() {
                     <h3 className="text-xl font-serif font-bold text-white mb-4">
                       {step.title}
                     </h3>
-                    <p className="text-gray-400 text-sm leading-relaxed mb-6">
+                    <p className="text-gray-400 text-sm leading-relaxed mb-6 flex-grow">
                       {step.description}
                     </p>
 
                     {/* Details */}
-                    <ul className="space-y-2">
+                    <ul className="space-y-2 mt-auto">
                       {step.details.map((detail, idx) => (
                         <li key={idx} className="flex items-center gap-2 text-sm text-gray-500">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#d4af37]"></div>
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#d4af37] flex-shrink-0"></div>
                           {detail}
                         </li>
                       ))}
