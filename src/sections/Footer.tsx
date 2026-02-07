@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Phone, Mail, MapPin, Instagram, Facebook, Twitter, ArrowUp, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -20,6 +21,17 @@ const services = [
 ];
 
 export default function Footer() {
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -192,7 +204,11 @@ export default function Footer() {
       {/* Scroll to Top Button */}
       <button
         onClick={scrollToTop}
-        className="fixed bottom-24 right-6 w-12 h-12 rounded-full bg-[#d4af37] text-black flex items-center justify-center shadow-lg hover:bg-[#c4a030] transition-all duration-300 hover:shadow-[0_0_20px_rgba(212,175,55,0.5)] z-40"
+        className={`fixed bottom-24 right-6 w-12 h-12 rounded-full bg-[#d4af37] text-black flex items-center justify-center shadow-lg hover:bg-[#c4a030] transition-all duration-500 hover:shadow-[0_0_20px_rgba(212,175,55,0.5)] z-40 ${
+          showScrollTop
+            ? 'opacity-100 translate-y-0'
+            : 'opacity-0 translate-y-4 pointer-events-none'
+        }`}
       >
         <ArrowUp className="w-5 h-5" />
       </button>

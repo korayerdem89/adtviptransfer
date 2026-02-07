@@ -41,6 +41,13 @@ export default function Navbar() {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
+  const handleLogoClick = (e: React.MouseEvent) => {
+    if (location.pathname === '/') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   const handleNavClick = (link: typeof navLinks[0]) => {
     setIsMobileMenuOpen(false);
 
@@ -74,6 +81,7 @@ export default function Navbar() {
             {/* Logo */}
             <Link
               to="/"
+              onClick={handleLogoClick}
               className="flex items-center gap-3 group flex-shrink-0"
             >
               <img
@@ -158,14 +166,13 @@ export default function Navbar() {
                 <Phone className="w-4 h-4" />
                 <span className="text-sm font-medium whitespace-nowrap">0543 380 66 49</span>
               </a>
-              <Link to="/#contact">
-                <Button
-                  className="bg-[#d4af37] hover:bg-[#c4a030] text-black font-semibold px-4 xl:px-6 py-2 rounded-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] text-sm whitespace-nowrap"
-                >
-                  <span className="hidden sm:inline">Rezervasyon</span>
-                  <span className="sm:hidden">Rezerv</span>
-                </Button>
-              </Link>
+              <Button
+                onClick={() => handleNavClick({ name: 'İletişim', href: '/#contact', type: 'hash' })}
+                className="bg-[#d4af37] hover:bg-[#c4a030] text-black font-semibold px-4 xl:px-6 py-2 rounded-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] text-sm whitespace-nowrap"
+              >
+                <span className="hidden sm:inline">Rezervasyon</span>
+                <span className="sm:hidden">Rezerv</span>
+              </Button>
             </div>
 
             {/* Mobile Menu Button */}
@@ -232,13 +239,12 @@ export default function Navbar() {
                 <Phone className="w-5 h-5" />
                 <span className="font-medium">0543 380 66 49</span>
               </a>
-              <Link to="/#contact" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button
-                  className="w-full bg-[#d4af37] hover:bg-[#c4a030] text-black font-semibold py-4"
-                >
-                  Rezervasyon Yap
-                </Button>
-              </Link>
+              <Button
+                onClick={() => handleNavClick({ name: 'İletişim', href: '/#contact', type: 'hash' })}
+                className="w-full bg-[#d4af37] hover:bg-[#c4a030] text-black font-semibold py-4"
+              >
+                Rezervasyon Yap
+              </Button>
             </div>
           </div>
         </div>

@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+
+const FORM_SERVICE_ID = import.meta.env.VITE_FORM_SERVICE_ID;
 
 const contactInfo = [
   {
@@ -33,6 +35,8 @@ const contactInfo = [
 export default function Contact() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -59,20 +63,49 @@ export default function Contact() {
     return () => observer.disconnect();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate form submission
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: '',
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: FORM_SERVICE_ID,
+          from_name: 'ADT VIP Transfer Web Sitesi',
+          subject: `[İletişim Formu] ${formData.subject}`,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || 'Belirtilmedi',
+          message: formData.message,
+        }),
       });
-    }, 3000);
+
+      const result = await response.json();
+
+      if (result.success) {
+        setIsSubmitted(true);
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: '',
+        });
+        setTimeout(() => setIsSubmitted(false), 5000);
+      } else {
+        throw new Error(result.message || 'Form gönderilemedi');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Bir hata oluştu. Lütfen tekrar deneyin.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -273,12 +306,29 @@ export default function Contact() {
                     />
                   </div>
 
+                  {error && (
+                    <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
+                      <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                      <span className="text-sm">{error}</span>
+                    </div>
+                  )}
+
                   <Button
                     type="submit"
-                    className="w-full bg-[#d4af37] hover:bg-[#c4a030] text-black font-semibold py-6 transition-all duration-300 hover:shadow-[0_0_30px_rgba(212,175,55,0.4)]"
+                    disabled={isLoading}
+                    className="w-full bg-[#d4af37] hover:bg-[#c4a030] text-black font-semibold py-6 transition-all duration-300 hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    <Send className="w-5 h-5 mr-2" />
-                    Mesaj Gönder
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Gönderiliyor...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5 mr-2" />
+                        Mesaj Gönder
+                      </>
+                    )}
                   </Button>
 
                   <p className="text-center text-gray-500 text-sm">

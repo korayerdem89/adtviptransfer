@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 // 1'den 28'e kadar webp formatında resimler
 const galleryImages = Array.from({ length: 24 }, (_, i) => `${i + 1}.webp`);
 
+
 export default function Gallery() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
