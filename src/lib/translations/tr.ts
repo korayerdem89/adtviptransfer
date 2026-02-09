@@ -206,6 +206,16 @@ const tr = {
     ],
   },
 
+  // Instagram
+  instagram: {
+    badge: 'Instagram',
+    title: 'Bizi',
+    titleHighlight: "Instagram'da Takip Edin",
+    subtitle: 'Yolculuklarımızdan kareler, araç filomuz ve VIP transfer deneyimlerimizi Instagram hesabımızdan takip edin.',
+    followUs: 'Takip Et',
+    viewOnInstagram: "Instagram'da Gör",
+  },
+
   // Contact
   contact: {
     badge: 'İletişim',

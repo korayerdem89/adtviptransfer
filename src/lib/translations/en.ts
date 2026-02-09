@@ -206,6 +206,16 @@ const en = {
     ],
   },
 
+  // Instagram
+  instagram: {
+    badge: 'Instagram',
+    title: 'Follow Us',
+    titleHighlight: 'on Instagram',
+    subtitle: 'Follow our Instagram account for snapshots from our journeys, our vehicle fleet and VIP transfer experiences.',
+    followUs: 'Follow Us',
+    viewOnInstagram: 'View on Instagram',
+  },
+
   // Contact
   contact: {
     badge: 'Contact',

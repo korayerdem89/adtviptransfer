@@ -4,6 +4,7 @@ import Fleet from '../sections/Fleet';
 import Gallery from '../sections/Gallery';
 import About from '../sections/About';
 import Process from '../sections/Process';
+import Instagram from '../sections/Instagram';
 import Contact from '../sections/Contact';
 
 export default function HomePage() {
@@ -15,6 +16,7 @@ export default function HomePage() {
       <Gallery />
       <About />
       <Process />
+      <Instagram />
       <Contact />
     </>
   );
