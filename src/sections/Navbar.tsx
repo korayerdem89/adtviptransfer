@@ -2,30 +2,31 @@ import { useState, useEffect } from 'react';
 import { Menu, X, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useLocation } from 'react-router-dom';
-
-const navLinks = [
-  { name: 'Ana Sayfa', href: '/', type: 'route' },
-  { name: 'Hizmetler', href: '/#services', type: 'hash' },
-  { name: 'Araç Filosu', href: '/#fleet', type: 'hash' },
-  { name: 'Galeri', href: '/#gallery', type: 'hash' },
-  { name: 'Blog', href: '/blog', type: 'route' },
-  { name: 'İletişim', href: '/#contact', type: 'hash' },
-];
-
-// Desktop için kısa isimler
-const desktopNavLinks = [
-  { name: 'Ana Sayfa', href: '/', type: 'route' },
-  { name: 'Hizmetler', href: '/#services', type: 'hash' },
-  { name: 'Filomuz', href: '/#fleet', type: 'hash' },
-  { name: 'Galeri', href: '/#gallery', type: 'hash' },
-  { name: 'İletişim', href: '/#contact', type: 'hash' },
-  { name: 'Blog', href: '/blog', type: 'route' },
-];
+import { useLanguage, type Language } from '@/lib/LanguageContext';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { lang, setLang, ts } = useLanguage();
+
+  const navLinks = [
+    { name: ts('nav.home'), href: '/', type: 'route' },
+    { name: ts('nav.services'), href: '/#services', type: 'hash' },
+    { name: ts('nav.fleet'), href: '/#fleet', type: 'hash' },
+    { name: ts('nav.gallery'), href: '/#gallery', type: 'hash' },
+    { name: ts('nav.blog'), href: '/blog', type: 'route' },
+    { name: ts('nav.contact'), href: '/#contact', type: 'hash' },
+  ];
+
+  const desktopNavLinks = [
+    { name: ts('nav.home'), href: '/', type: 'route' },
+    { name: ts('nav.services'), href: '/#services', type: 'hash' },
+    { name: ts('nav.fleet'), href: '/#fleet', type: 'hash' },
+    { name: ts('nav.gallery'), href: '/#gallery', type: 'hash' },
+    { name: ts('nav.contact'), href: '/#contact', type: 'hash' },
+    { name: ts('nav.blog'), href: '/blog', type: 'route' },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,7 +37,6 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
@@ -67,6 +67,60 @@ export default function Navbar() {
       }
     }
   };
+
+  const toggleLang = (newLang: Language) => {
+    setLang(newLang);
+  };
+
+  const TurkeyFlag = () => (
+    <svg viewBox="0 0 1200 800" className="w-6 h-4 rounded-sm">
+      <rect width="1200" height="800" fill="#E30A17" />
+      <circle cx="425" cy="400" r="200" fill="#fff" />
+      <circle cx="475" cy="400" r="160" fill="#E30A17" />
+      <polygon fill="#fff" points="583,400 530,424 543,373 505,340 558,336" transform="rotate(18,560,400)" />
+    </svg>
+  );
+
+  const UKFlag = () => (
+    <svg viewBox="0 0 60 30" className="w-6 h-4 rounded-sm">
+      <clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+      <clipPath id="t"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
+      <g clipPath="url(#s)">
+        <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6"/>
+        <path d="M0,0 L60,30 M60,0 L0,30" clipPath="url(#t)" stroke="#C8102E" strokeWidth="4"/>
+        <path d="M30,0 v30 M0,15 h60" stroke="#fff" strokeWidth="10"/>
+        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" strokeWidth="6"/>
+      </g>
+    </svg>
+  );
+
+  const LanguageSwitcher = ({ className = '' }: { className?: string }) => (
+    <div className={`flex items-center gap-1.5 ${className}`}>
+      <button
+        onClick={() => toggleLang('tr')}
+        className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+          lang === 'tr'
+            ? 'bg-[#d4af37]/20 ring-2 ring-[#d4af37]/60'
+            : 'opacity-50 hover:opacity-100'
+        }`}
+        title="Türkçe"
+      >
+        <TurkeyFlag />
+      </button>
+      <button
+        onClick={() => toggleLang('en')}
+        className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+          lang === 'en'
+            ? 'bg-[#d4af37]/20 ring-2 ring-[#d4af37]/60'
+            : 'opacity-50 hover:opacity-100'
+        }`}
+        title="English"
+      >
+        <UKFlag />
+      </button>
+    </div>
+  );
 
   return (
     <>
@@ -157,8 +211,9 @@ export default function Navbar() {
               ))}
             </div>
 
-            {/* CTA Button */}
+            {/* CTA Button + Language */}
             <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
+              <LanguageSwitcher />
               <a
                 href="tel:+905433806649"
                 className="hidden xl:flex items-center gap-2 text-[#d4af37] hover:text-white transition-colors duration-300"
@@ -167,25 +222,27 @@ export default function Navbar() {
                 <span className="text-sm font-medium whitespace-nowrap">0543 380 66 49</span>
               </a>
               <Button
-                onClick={() => handleNavClick({ name: 'İletişim', href: '/#contact', type: 'hash' })}
+                onClick={() => handleNavClick({ name: ts('nav.contact'), href: '/#contact', type: 'hash' })}
                 className="bg-[#d4af37] hover:bg-[#c4a030] text-black font-semibold px-4 xl:px-6 py-2 rounded-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] text-sm whitespace-nowrap"
               >
-                <span className="hidden sm:inline">Rezervasyon</span>
-                <span className="sm:hidden">Rezerv</span>
+                {ts('nav.reservation')}
               </Button>
             </div>
 
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden text-white p-2 flex-shrink-0"
-            >
-              {isMobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </button>
+            {/* Mobile: Language + Menu Button */}
+            <div className="lg:hidden flex items-center gap-2">
+              <LanguageSwitcher />
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-white p-2 flex-shrink-0"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </nav>
@@ -240,10 +297,10 @@ export default function Navbar() {
                 <span className="font-medium">0543 380 66 49</span>
               </a>
               <Button
-                onClick={() => handleNavClick({ name: 'İletişim', href: '/#contact', type: 'hash' })}
+                onClick={() => handleNavClick({ name: ts('nav.contact'), href: '/#contact', type: 'hash' })}
                 className="w-full bg-[#d4af37] hover:bg-[#c4a030] text-black font-semibold py-4"
               >
-                Rezervasyon Yap
+                {ts('nav.reservationMake')}
               </Button>
             </div>
           </div>

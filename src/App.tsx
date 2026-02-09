@@ -7,13 +7,14 @@ import WhatsAppButton from './components/WhatsAppButton';
 import HomePage from './pages/HomePage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
+import { LanguageProvider, useLanguage } from './lib/LanguageContext';
 
-function App() {
+function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
+  const { ts } = useLanguage();
 
   useEffect(() => {
-    // Simulate loading
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1500);
@@ -21,7 +22,6 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Scroll to top on route change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [location.pathname]);
@@ -36,7 +36,7 @@ function App() {
             alt="ADT VIP Transfer" 
             className="h-16 w-auto mx-auto mb-4"
           />
-          <p className="text-gray-400 mt-2 text-sm tracking-widest">YÜKLENİYOR...</p>
+          <p className="text-gray-400 mt-2 text-sm tracking-widest">{ts('app.loading')}</p>
         </div>
       </div>
     );
@@ -56,6 +56,14 @@ function App() {
       <Footer />
       <WhatsAppButton />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }
 
