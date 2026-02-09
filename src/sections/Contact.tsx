@@ -10,6 +10,7 @@ const FORM_SERVICE_ID = import.meta.env.VITE_FORM_SERVICE_ID;
 
 export default function Contact() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,21 +49,31 @@ export default function Contact() {
   ];
 
   useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) {
+      setIsVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate-visible');
-          }
-        });
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
       },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.05 }
     );
 
-    const elements = sectionRef.current?.querySelectorAll('.animate-on-scroll');
-    elements?.forEach((el) => observer.observe(el));
+    observer.observe(node);
 
-    return () => observer.disconnect();
+    // Fallback: guarantee visibility even if observer never fires
+    const fallback = setTimeout(() => setIsVisible(true), 2000);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallback);
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,6 +119,13 @@ export default function Contact() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const animCls =
+    `transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`;
+
+  const animStyle = (delay: number): React.CSSProperties => ({
+    transitionDelay: isVisible ? `${delay}ms` : '0ms',
+  });
+
   return (
     <section id="contact" ref={sectionRef} className="relative py-24 bg-[#0a0a0a] overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#d4af37]/30 to-transparent"></div>
@@ -116,16 +134,16 @@ export default function Contact() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 inline-flex items-center gap-2 px-4 py-2 bg-[#d4af37]/10 border border-[#d4af37]/30 rounded-full mb-6">
+          <div className={`${animCls} inline-flex items-center gap-2 px-4 py-2 bg-[#d4af37]/10 border border-[#d4af37]/30 rounded-full mb-6`} style={animStyle(0)}>
             <Mail className="w-4 h-4 text-[#d4af37]" />
             <span className="text-sm text-[#d4af37] tracking-wider uppercase">{ts('contact.badge')}</span>
           </div>
 
-          <h2 className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 delay-100 text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-white mb-6">
+          <h2 className={`${animCls} text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-white mb-6`} style={animStyle(100)}>
             {ts('contact.title')} <span className="text-gradient-gold">{ts('contact.titleHighlight')}</span>
           </h2>
 
-          <p className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 delay-200 text-gray-400 max-w-2xl mx-auto text-lg">
+          <p className={`${animCls} text-gray-400 max-w-2xl mx-auto text-lg`} style={animStyle(200)}>
             {ts('contact.subtitle')}
           </p>
         </div>
@@ -138,8 +156,8 @@ export default function Contact() {
               {contactInfo.map((info, index) => (
                 <div
                   key={info.title}
-                  className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700"
-                  style={{ transitionDelay: `${(index + 3) * 100}ms` }}
+                  className={animCls}
+                  style={animStyle((index + 3) * 100)}
                 >
                   <div className="flex items-start gap-4 p-5 bg-gradient-to-r from-[#111] to-[#0a0a0a] border border-gray-800 rounded-xl transition-all duration-300 hover:border-[#d4af37]/30">
                     <div className="w-11 h-11 rounded-lg bg-[#d4af37]/10 border border-[#d4af37]/30 flex items-center justify-center flex-shrink-0">
@@ -178,7 +196,7 @@ export default function Contact() {
 
           {/* Right - Form */}
           <div className="lg:col-span-3">
-            <div className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 delay-300 bg-gradient-to-b from-[#111] to-[#0a0a0a] border border-gray-800 rounded-2xl p-8">
+            <div className={`${animCls} bg-gradient-to-b from-[#111] to-[#0a0a0a] border border-gray-800 rounded-2xl p-8`} style={animStyle(300)}>
               {isSubmitted ? (
                 <div className="text-center py-12">
                   <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
