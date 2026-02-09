@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, AlertCircle, Loader2, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useLanguage } from '@/lib/LanguageContext';
 
 const FORM_SERVICE_ID = import.meta.env.VITE_FORM_SERVICE_ID;
+
+const SUBJECT_OPTIONS = ['reservation', 'info', 'suggestion', 'other'] as const;
+type SubjectOption = typeof SUBJECT_OPTIONS[number];
 
 export default function Contact() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -18,10 +22,14 @@ export default function Contact() {
     name: '',
     email: '',
     phone: '',
-    subject: '',
+    subject: '' as SubjectOption | '',
+    reservationDate: '',
+    reservationTime: '',
     message: '',
   });
   const { ts } = useLanguage();
+
+  const isReservation = formData.subject === 'reservation';
 
   const contactInfo = [
     {
@@ -66,8 +74,6 @@ export default function Contact() {
     );
 
     observer.observe(node);
-
-    // Fallback: guarantee visibility even if observer never fires
     const fallback = setTimeout(() => setIsVisible(true), 2000);
 
     return () => {
@@ -82,6 +88,16 @@ export default function Contact() {
     setError(null);
 
     try {
+      const subjectLabel = formData.subject ? ts(`contact.subjectOption.${formData.subject}`) : '';
+
+      // Build message body
+      let messageBody = formData.message;
+      if (isReservation && (formData.reservationDate || formData.reservationTime)) {
+        messageBody += `\n\n--- ${ts('contact.reservationDetails')} ---`;
+        if (formData.reservationDate) messageBody += `\n${ts('contact.formDate')}: ${formData.reservationDate}`;
+        if (formData.reservationTime) messageBody += `\n${ts('contact.formTime')}: ${formData.reservationTime}`;
+      }
+
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
@@ -91,11 +107,13 @@ export default function Contact() {
         body: JSON.stringify({
           access_key: FORM_SERVICE_ID,
           from_name: ts('contact.formFromName'),
-          subject: `${ts('contact.formSubjectPrefix')} ${formData.subject}`,
+          subject: `${ts('contact.formSubjectPrefix')} ${subjectLabel}`,
           name: formData.name,
           email: formData.email,
           phone: formData.phone || ts('contact.formNotSpecified'),
-          message: formData.message,
+          message: messageBody,
+          ...(isReservation && formData.reservationDate && { reservation_date: formData.reservationDate }),
+          ...(isReservation && formData.reservationTime && { reservation_time: formData.reservationTime }),
         }),
       });
 
@@ -103,7 +121,7 @@ export default function Contact() {
 
       if (result.success) {
         setIsSubmitted(true);
-        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+        setFormData({ name: '', email: '', phone: '', subject: '', reservationDate: '', reservationTime: '', message: '' });
         setTimeout(() => setIsSubmitted(false), 5000);
       } else {
         throw new Error(result.message || ts('contact.formError'));
@@ -119,12 +137,23 @@ export default function Contact() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleSubjectChange = (value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      subject: value as SubjectOption,
+      // Reset reservation fields when switching away from reservation
+      ...(value !== 'reservation' && { reservationDate: '', reservationTime: '' }),
+    }));
+  };
+
   const animCls =
     `transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`;
 
   const animStyle = (delay: number): React.CSSProperties => ({
     transitionDelay: isVisible ? `${delay}ms` : '0ms',
   });
+
+  const inputCls = 'bg-[#0a0a0a] border-gray-700 text-white placeholder:text-gray-600 focus:border-[#d4af37] focus:ring-[#d4af37]/20';
 
   return (
     <section id="contact" ref={sectionRef} className="relative py-24 bg-[#0a0a0a] overflow-hidden">
@@ -207,31 +236,82 @@ export default function Contact() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Name + Email */}
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="name" className="text-gray-300">{ts('contact.formName')} <span className="text-[#d4af37]">*</span></Label>
-                      <Input id="name" name="name" value={formData.name} onChange={handleChange} placeholder={ts('contact.formNamePlaceholder')} required className="bg-[#0a0a0a] border-gray-700 text-white placeholder:text-gray-600 focus:border-[#d4af37] focus:ring-[#d4af37]/20" />
+                      <Input id="name" name="name" value={formData.name} onChange={handleChange} placeholder={ts('contact.formNamePlaceholder')} required className={inputCls} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-gray-300">{ts('contact.formEmail')} <span className="text-[#d4af37]">*</span></Label>
-                      <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder={ts('contact.formEmailPlaceholder')} required className="bg-[#0a0a0a] border-gray-700 text-white placeholder:text-gray-600 focus:border-[#d4af37] focus:ring-[#d4af37]/20" />
+                      <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder={ts('contact.formEmailPlaceholder')} required className={inputCls} />
                     </div>
                   </div>
 
+                  {/* Phone + Subject */}
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="phone" className="text-gray-300">{ts('contact.formPhone')}</Label>
-                      <Input id="phone" name="phone" type="tel" value={formData.phone} onChange={handleChange} placeholder={ts('contact.formPhonePlaceholder')} className="bg-[#0a0a0a] border-gray-700 text-white placeholder:text-gray-600 focus:border-[#d4af37] focus:ring-[#d4af37]/20" />
+                      <Input id="phone" name="phone" type="tel" value={formData.phone} onChange={handleChange} placeholder={ts('contact.formPhonePlaceholder')} className={inputCls} />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="subject" className="text-gray-300">{ts('contact.formSubject')} <span className="text-[#d4af37]">*</span></Label>
-                      <Input id="subject" name="subject" value={formData.subject} onChange={handleChange} placeholder={ts('contact.formSubjectPlaceholder')} required className="bg-[#0a0a0a] border-gray-700 text-white placeholder:text-gray-600 focus:border-[#d4af37] focus:ring-[#d4af37]/20" />
+                      <Label className="text-gray-300">{ts('contact.formSubject')} <span className="text-[#d4af37]">*</span></Label>
+                      <Select value={formData.subject} onValueChange={handleSubjectChange} required>
+                        <SelectTrigger className="w-full h-9 bg-[#0a0a0a] border-gray-700 text-white focus:border-[#d4af37] focus:ring-[#d4af37]/20 data-[placeholder]:text-gray-600">
+                          <SelectValue placeholder={ts('contact.formSubjectPlaceholder')} />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#111] border-gray-700">
+                          {SUBJECT_OPTIONS.map(opt => (
+                            <SelectItem key={opt} value={opt} className="text-gray-300 focus:bg-[#d4af37]/10 focus:text-white">
+                              {ts(`contact.subjectOption.${opt}`)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
+                  {/* Reservation Date + Time — only shown when subject is reservation */}
+                  {isReservation && (
+                    <div className="grid sm:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <div className="space-y-2">
+                        <Label htmlFor="reservationDate" className="text-gray-300">
+                          <CalendarDays className="w-4 h-4 inline-block mr-1.5 -mt-0.5 text-[#d4af37]" />
+                          {ts('contact.formDate')} <span className="text-[#d4af37]">*</span>
+                        </Label>
+                        <Input
+                          id="reservationDate"
+                          name="reservationDate"
+                          type="date"
+                          value={formData.reservationDate}
+                          onChange={handleChange}
+                          required={isReservation}
+                          min={new Date().toISOString().split('T')[0]}
+                          className={`${inputCls} [color-scheme:dark]`}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="reservationTime" className="text-gray-300">
+                          <Clock className="w-4 h-4 inline-block mr-1.5 -mt-0.5 text-[#d4af37]" />
+                          {ts('contact.formTime')} <span className="text-[#d4af37]">*</span>
+                        </Label>
+                        <Input
+                          id="reservationTime"
+                          name="reservationTime"
+                          type="time"
+                          value={formData.reservationTime}
+                          onChange={handleChange}
+                          required={isReservation}
+                          className={`${inputCls} [color-scheme:dark]`}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Message */}
                   <div className="space-y-2">
                     <Label htmlFor="message" className="text-gray-300">{ts('contact.formMessage')} <span className="text-[#d4af37]">*</span></Label>
-                    <Textarea id="message" name="message" value={formData.message} onChange={handleChange} placeholder={ts('contact.formMessagePlaceholder')} required rows={5} className="bg-[#0a0a0a] border-gray-700 text-white placeholder:text-gray-600 focus:border-[#d4af37] focus:ring-[#d4af37]/20 resize-none" />
+                    <Textarea id="message" name="message" value={formData.message} onChange={handleChange} placeholder={ts('contact.formMessagePlaceholder')} required rows={5} className={`${inputCls} resize-none`} />
                   </div>
 
                   {error && (
