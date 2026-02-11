@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useLanguage } from '@/lib/LanguageContext';
 
-const galleryImages = Array.from({ length: 24 }, (_, i) => `${i + 1}.webp`);
+const galleryImages = Array.from({ length: 29 }, (_, i) => `${i + 1}.webp`);
 
 export default function Gallery() {
   const { ts } = useLanguage();
