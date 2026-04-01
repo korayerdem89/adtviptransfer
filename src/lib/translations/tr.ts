@@ -85,6 +85,11 @@ const tr = {
         description: 'Gün boyu sizinle olan özel şoförlü araç kiralama hizmeti. Programınıza göre esnek ve kişiselleştirilmiş ulaşım çözümleri sunuyoruz.',
         features: ['Esnek Program', 'Özel Şoför', 'Saatlik Ücret'],
       },
+      {
+        title: 'Düğün Transferi',
+        description: 'Düğün, nişan ve özel günleriniz için lüks ve şık araçlarımızla unutulmaz bir deneyim sunuyoruz. Gelin ve damat transferi için özel hazırlık ve süsleme hizmeti.',
+        features: ['Özel Süsleme', 'Şeritli Araç', 'Kırmızı Halı'],
+      },
     ],
   },
 
@@ -275,6 +280,7 @@ const tr = {
       'Şehir Dışı Transfer',
       'Kurumsal Transfer',
       'Grup Transferleri',
+      'Düğün Transferi',
     ],
   },
 

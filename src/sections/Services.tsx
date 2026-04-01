@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { Plane, Building2, MapPin, Users, Briefcase, Car, ArrowRight, Ship } from 'lucide-react';
+import { Plane, Building2, MapPin, Users, Briefcase, Car, ArrowRight, Ship, Heart } from 'lucide-react';
 import { useLanguage } from '@/lib/LanguageContext';
 
-const serviceIcons = [Plane, Ship, Building2, MapPin, Users, Briefcase, Car];
+const serviceIcons = [Plane, Ship, Building2, MapPin, Users, Briefcase, Car, Heart];
 
 export default function Services() {
   const { t, ts } = useLanguage();

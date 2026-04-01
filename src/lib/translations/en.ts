@@ -85,6 +85,11 @@ const en = {
         description: 'Private chauffeured car rental service that stays with you all day. Flexible and personalized transportation solutions according to your schedule.',
         features: ['Flexible Schedule', 'Private Driver', 'Hourly Rate'],
       },
+      {
+        title: 'Wedding Transfer',
+        description: 'We offer an unforgettable experience with our luxurious and elegant vehicles for your weddings, engagements and special occasions. Special preparation and decoration service for bride and groom transfers.',
+        features: ['Special Decoration', 'Ribbons', 'Red Carpet'],
+      },
     ],
   },
 
@@ -275,6 +280,7 @@ const en = {
       'Intercity Transfer',
       'Corporate Transfer',
       'Group Transfers',
+      'Wedding Transfer',
     ],
   },
 
