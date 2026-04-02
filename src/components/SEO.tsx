@@ -12,9 +12,9 @@ interface SEOProps {
 }
 
 const defaultSEO = {
-  title: 'ADT VIP Transfer | İzmir VIP Araç Transfer Hizmetleri',
-  description: 'İzmir Adnan Menderes Havalimanı VIP transfer, şehir içi ve şehir dışı lüks araç kiralama hizmetleri. Profesyonel şoförler, son model araçlar, 7/24 hizmet.',
-  keywords: 'VIP transfer, İzmir havalimanı transfer, lüks araç kiralama, şoförlü araç, Adnan Menderes transfer, Çeşme transfer, Alaçatı transfer, Kıbrıs transfer, kurumsal transfer',
+  title: 'ADT VIP Transfer | İzmir Havalimanı ve VIP Transfer Hizmetleri',
+  description: "İzmir Adnan Menderes Havalimanı, Gaziemir, Konak, Bornova, Karşıyaka, Çeşme, Alaçatı ve Kuşadası için 7/24 VIP transfer hizmeti.",
+  keywords: 'izmir vip transfer, izmir havalimanı transfer, adnan menderes transfer, gaziemir vip transfer, çeşme transfer, alaçatı transfer, kuşadası transfer, düğün transferi, kurumsal transfer',
   ogImage: 'https://adtviptransfer.com.tr/og-image.jpg',
   ogType: 'website',
 };
@@ -25,10 +25,12 @@ export default function SEO({
   keywords = defaultSEO.keywords,
   ogImage = defaultSEO.ogImage,
   ogType = defaultSEO.ogType,
+  canonical,
   schema,
 }: SEOProps) {
   const location = useLocation();
-  const canonicalUrl = `https://adtviptransfer.com.tr${location.pathname}`;
+  const computedCanonicalUrl = `https://adtviptransfer.com.tr${location.pathname}`;
+  const canonicalUrl = canonical ?? computedCanonicalUrl;
 
   useEffect(() => {
     // Update document title
@@ -42,6 +44,10 @@ export default function SEO({
       'robots': 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1',
       'googlebot': 'index, follow',
       'bingbot': 'index, follow',
+      'geo.region': 'TR-35',
+      'geo.placename': 'Izmir',
+      'geo.position': '38.3230;27.1295',
+      'ICBM': '38.3230, 27.1295',
       // Open Graph
       'og:title': title,
       'og:description': description,
@@ -105,7 +111,7 @@ export default function SEO({
         '@type': 'LocalBusiness',
         '@id': 'https://adtviptransfer.com.tr',
         name: 'ADT VIP Transfer',
-        description: 'İzmir\'de VIP transfer hizmetleri. Havalimanı transferi, şehir içi ve şehir dışı lüks araç kiralama.',
+        description: 'İzmir merkezli VIP transfer hizmetleri. Havalimanı transferi, şehir içi, şehir dışı, düğün ve kurumsal transfer çözümleri.',
         url: 'https://adtviptransfer.com.tr',
         telephone: '+90-543-380-66-49',
         email: 'info@adtviptransfer.com.tr',
@@ -131,15 +137,25 @@ export default function SEO({
         priceRange: '₺₺₺',
         currenciesAccepted: 'TRY, EUR, USD',
         paymentAccepted: 'Cash, Credit Card, Bank Transfer',
-        areaServed: {
-          '@type': 'GeoCircle',
-          geoMidpoint: {
-            '@type': 'GeoCoordinates',
-            latitude: '38.3230',
-            longitude: '27.1295',
+        areaServed: [
+          { '@type': 'City', name: 'Izmir' },
+          { '@type': 'AdministrativeArea', name: 'Gaziemir' },
+          { '@type': 'AdministrativeArea', name: 'Konak' },
+          { '@type': 'AdministrativeArea', name: 'Bornova' },
+          { '@type': 'AdministrativeArea', name: 'Karsiyaka' },
+          { '@type': 'TouristDestination', name: 'Cesme' },
+          { '@type': 'TouristDestination', name: 'Alacati' },
+          { '@type': 'TouristDestination', name: 'Kusadasi' },
+          {
+            '@type': 'GeoCircle',
+            geoMidpoint: {
+              '@type': 'GeoCoordinates',
+              latitude: '38.3230',
+              longitude: '27.1295',
+            },
+            geoRadius: '50000',
           },
-          geoRadius: '50000',
-        },
+        ],
         hasOfferCatalog: {
           '@type': 'OfferCatalog',
           name: 'VIP Transfer Hizmetleri',
@@ -166,6 +182,14 @@ export default function SEO({
                 '@type': 'Service',
                 name: 'Kıbrıs Transfer',
                 description: 'Kıbrıs VIP transfer ve ulaşım hizmetleri',
+              },
+            },
+            {
+              '@type': 'Offer',
+              itemOffered: {
+                '@type': 'Service',
+                name: 'Düğün Transferi',
+                description: 'Düğün ve özel günler için şoförlü VIP araç transfer hizmeti',
               },
             },
           ],

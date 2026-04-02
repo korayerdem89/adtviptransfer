@@ -1,0 +1,30 @@
+# ADT VIP Transfer
+
+> Official website of ADT VIP Transfer, providing premium airport, city, intercity, corporate, group, wedding, and Cyprus transfer services in Izmir and surrounding regions.
+
+## Canonical
+- https://adtviptransfer.com.tr/
+
+## Important Pages
+- https://adtviptransfer.com.tr/
+- https://adtviptransfer.com.tr/blog
+
+## Blog Posts
+- https://adtviptransfer.com.tr/blog/izmir-havalimani-vip-transfer-rehberi
+- https://adtviptransfer.com.tr/blog/cesme-alacati-transfer-onerileri
+- https://adtviptransfer.com.tr/blog/kibris-transfer-vip-hizmetler
+- https://adtviptransfer.com.tr/blog/kurumsal-vip-transfer-neden-onemli
+- https://adtviptransfer.com.tr/blog/vip-transfer-secme-kriterleri
+- https://adtviptransfer.com.tr/blog/kusadasi-efes-transfer-tatil
+
+## Contact
+- Phone: +90 543 380 66 49
+- Website: https://adtviptransfer.com.tr/
+
+## Crawl Guidance
+- Public marketing pages and blog posts may be indexed and summarized.
+- Respect canonical URLs and structured metadata defined on pages.
+- Do not assume unpublished pages or private endpoints exist.
+
+## Sitemaps
+- https://adtviptransfer.com.tr/sitemap.xml
